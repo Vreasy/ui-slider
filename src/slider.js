@@ -5,6 +5,11 @@ angular.module('ui.slider', []).value('uiSliderConfig',{}).directive('uiSlider',
     uiSliderConfig = uiSliderConfig || {};
     return {
         require: 'ngModel',
+        link: function(scope, element, attr, ctrl) {
+            ctrl.$viewChangeListeners.push(function() {
+              scope.$eval(attr.ngChange);
+            });
+        },
         compile: function () {
             return function (scope, elm, attrs, ngModel) {
 
@@ -82,7 +87,7 @@ angular.module('ui.slider', []).value('uiSliderConfig',{}).directive('uiSlider',
                 ngModel.$render = function() {
                     init();
                     var method = options.range === true ? 'values' : 'value';
-                    
+
                     if (!options.range && isNaN(ngModel.$viewValue) && !(ngModel.$viewValue instanceof Array)) {
                         ngModel.$viewValue = 0;
                     }
@@ -92,7 +97,7 @@ angular.module('ui.slider', []).value('uiSliderConfig',{}).directive('uiSlider',
 
                     // Do some sanity check of range values
                     if (options.range === true) {
-                        
+
                         // Check outer bounds for min and max values
                         if (angular.isDefined(options.min) && options.min > ngModel.$viewValue[0]) {
                             ngModel.$viewValue[0] = options.min;
